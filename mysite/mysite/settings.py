@@ -11,10 +11,13 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+with open(f'{BASE_DIR}/mysite/config.json', 'r') as f:
+    CONFIG_SCHEMA = json.loads(f.read())
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -30,7 +33,9 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+#comentar modulos do django desnecessarios
 INSTALLED_APPS = [
+    'polls.apps.PollsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -75,8 +80,19 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': CONFIG_SCHEMA['DB_NAME'],
+        'USER': CONFIG_SCHEMA['DB_USER'],
+        'PASSWORD': CONFIG_SCHEMA['DB_PASSWORD'],
+        'HOST': CONFIG_SCHEMA['DB_HOST'],
+        'PORT': CONFIG_SCHEMA['DB_PORT'],
+        'TEST': {
+            'NAME': CONFIG_SCHEMA['TEST_DB_NAME'],
+            'USER': CONFIG_SCHEMA['TEST_DB_USER'],
+            'PASSWORD': CONFIG_SCHEMA['TEST_DB_PASSWORD'],
+            'HOST': CONFIG_SCHEMA['TEST_DB_HOST'],
+            'PORT': CONFIG_SCHEMA['TEST_DB_PORT'],
+        }
     }
 }
 
