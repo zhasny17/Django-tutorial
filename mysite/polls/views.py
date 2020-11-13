@@ -1,18 +1,20 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.http import HttpResponse, Http404, HttpResponseRedirect, JsonResponse
 from django.template import loader
 from .models import Question, Choice
 from django.urls import reverse
 
 
 def index(request):
-    latest_question_list = Question.objects.order_by('-pud_date')[:5]
-    print(latest_question_list)
-    template = loader.get_template('polls/index.html')
-    context = {
-        'latest_question_list': latest_question_list,
-    }
-    return render(request, 'polls/index.html', context)
+    questions = Question.objects.all()
+    response = [
+        {
+            'questionText': question['question_text'],
+            'pubDate': uqestion['pub_date']
+        }
+        for question in questions
+    ]
+    return JsonResponse({'questions': response})
 
 
 def detail(request, question_id):
