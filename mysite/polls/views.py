@@ -4,8 +4,10 @@ from django.template import loader
 from .models import Question, Choice
 from django.urls import reverse
 
-
-def index(request):
+##########################################################################################
+# HELPER FUNCTIONS
+##########################################################################################
+def get_all_question(request):
     questions = Question.objects.all()
     response = [
         {
@@ -17,13 +19,31 @@ def index(request):
     return JsonResponse({'questions': response})
 
 
+def create_question():
+    pass
+
+
+##########################################################################################
+# MAIN FUNCTIONS
+##########################################################################################
+def index(request):
+    if request.method == 'GET':
+        return get_all_question(request)
+    if request.method == 'POST':
+        return create_question(request)
+
+
 def detail(request, question_id):
     try:
-        question = Question.objects.get(pk=question_id)
+        question = Question.objects.filter(id=question_id)
     except Question.DoesNotExist:
         raise Http404("Question does not exist")
-    return render(request, 'polls/detail.html', {'question': question})
-    # return HttpResponse("You're looking at question %s." % question_id)
+    return JsonResponse(
+        {
+            'questionText': question['question_text'],
+            'pubDate': uqestion['pub_date']
+        }
+    )
 
 
 def results(request, question_id):
@@ -48,3 +68,7 @@ def vote(request, question_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+
+
+def create_question():
+    pass
